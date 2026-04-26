@@ -25,7 +25,7 @@ tabla_transiciones = {
         "SYN":  [estados.q_fallo],
         "ACK":  [estados.q_fallo],
         "DATA": [estados.q_fallo],
-        "RST":  [estados.q3]         # ← aquí tenías DATA→q3, debería ser RST→q3
+        "RST":  [estados.q3]      
     },
     estados.q3: {
         "SYN":  [estados.q_fallo],
