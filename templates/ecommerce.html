@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block titulo %}E-Commerce{% endblock %}
+
+{% block encabezado %}🛒 E-Commerce - Validador de Comprador Potencial{% endblock %}
+
+{% block descripcion %}
+    Autómata Finito Determinista (AFD) que valida el flujo de un usuario: HOME → SEARCH+ → CART
+{% endblock %}
+
+{% block contenido %}
+<div class="seccion-formulario">
+    <h2 style="color: #667eea; margin-bottom: 15px;">Ingrese una secuencia de eventos</h2>
+    <div class="formulario-grupo">
+        <label>Eventos (HOME, SEARCH, CART):</label>
+        <textarea id="entrada-ecommerce" placeholder="Ej: HOME,SEARCH,CART o en líneas separadas"></textarea>
+    </div>
+    
+    <div class="botones-accion">
+        <button class="btn btn-primario" onclick="procesarEcommerce()">Procesar</button>
+        <button class="btn btn-secundario" onclick="limpiarEcommerce()">Limpiar</button>
+    </div>
+    
+    <div style="margin-top: 15px;">
+        <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos rápidos:</p>
+        <div class="ejemplos">
+            <button class="btn btn-ejemplo" onclick="cargarEjemploEcommerce(['HOME', 'SEARCH', 'CART'])">HOME → SEARCH → CART</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploEcommerce(['HOME', 'SEARCH', 'SEARCH', 'CART'])">HOME → SEARCH → SEARCH → CART</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploEcommerce(['HOME', 'CART'])">HOME → CART (inválido)</button>
+        </div>
+    </div>
+</div>
+
+<div class="contenedor-principal">
+    <div class="panel">
+        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        {{ tabla|safe }}
+    </div>
+    
+    {% if diagrama_filename %}
+    <div class="panel">
+        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
+    </div>
+    {% endif %}
+</div>
+
+<div id="resultado-ecommerce"></div>
+
+<script>
+    function procesarEcommerce() {
+        const entrada = document.getElementById('entrada-ecommerce').value.trim();
+        if (!entrada) {
+            alert('Por favor ingrese una secuencia');
+            return;
+        }
+        
+        let secuencia = entrada.split('\n').map(s => s.trim()).filter(s => s);
+        if (secuencia.length === 1 && secuencia[0].includes(',')) {
+            secuencia = secuencia[0].split(',').map(s => s.trim());
+        }
+        
+        const cargando = document.getElementById('resultado-ecommerce');
+        cargando.innerHTML = '<div class="cargando"><div class="spinner"></div></div>';
+        
+        fetch('/e-commerce/procesar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({secuencia: secuencia})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const clase = data.resultado ? 'aceptado' : 'rechazado';
+            const texto = data.resultado ? '✓ COMPRADOR POTENCIAL' : '✗ NO ES COMPRADOR POTENCIAL';
+            
+            let html = `<div class="resultado ${clase}">${texto}</div>`;
+            if (data.mensaje) {
+                html += `<div class="recorrido">
+                            <div class="recorrido-titulo">Mensaje:</div>
+                            <div class="recorrido-contenido">${data.mensaje}</div>
+                         </div>`;
+            }
+            html += `<div class="recorrido">
+                        <div class="recorrido-titulo">Recorrido del autómata:</div>
+                        <div class="recorrido-contenido">${data.recorrido.join(' → ')}</div>
+                     </div>`;
+            
+            cargando.innerHTML = html;
+        });
+    }
+    
+    function limpiarEcommerce() {
+        document.getElementById('entrada-ecommerce').value = '';
+        document.getElementById('resultado-ecommerce').innerHTML = '';
+    }
+    
+    function cargarEjemploEcommerce(ejemplo) {
+        document.getElementById('entrada-ecommerce').value = ejemplo.join('\n');
+        procesarEcommerce();
+    }
+</script>
+{% endblock %}

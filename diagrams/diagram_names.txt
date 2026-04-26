@@ -3,3 +3,4 @@ ciberseguridad.png
 iot.png
 notacion.png
 transaccion.png
+ecommerce.png

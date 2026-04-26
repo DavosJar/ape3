@@ -4,6 +4,7 @@ from ciberseguridad import procesar_afn as _procesar_afn_ciberseguridad, tabla_t
 from lecturas_iot import procesar_afn as _procesar_afn_iot, transiciones as TRANS_IOT, Estados as Estados_IOT
 from notacion_cientifica import es_valido as _es_valido
 from transaccion_bancaria import validar_transaccion as _validar_transaccion, TRANSICIONES as TRANS_TRANSACCION, ESTADO_INICIAL as INICIAL_TRANSACCION, ESTADOS_FINALES as FINALES_TRANSACCION
+from e_commerce import simular_afd as _simular_afd, TRANSICIONES as TRANS_ECOMMERCE, ESTADO_INICIAL as INICIAL_ECOMMERCE, ESTADOS_FINALES as FINALES_ECOMMERCE
 
 app = Flask(__name__)
 
@@ -221,11 +222,40 @@ class TransaccionBancaria:
         ]
 
 
+class ECommerce:
+    def __init__(self):
+        self.transiciones = TRANS_ECOMMERCE
+        self.estado_inicial = INICIAL_ECOMMERCE
+        self.estados_finales = FINALES_ECOMMERCE
+        self.estados = list(self.transiciones.keys())
+    
+    def ejecutar(self, tokens):
+        return _simular_afd(tokens)
+    
+    def obtener_tabla_html(self):
+        return GeneradorDiagrama.generar_tabla_html(
+            self.transiciones,
+            self.estados,
+            self.estados_finales
+        )
+    
+    def obtener_diagrama_filename(self):
+        return "ecommerce.png"
+    
+    def obtener_ejemplos(self):
+        return [
+            ["HOME", "SEARCH", "CART"],
+            ["HOME", "SEARCH", "SEARCH", "CART"],
+            ["HOME", "CART"]
+        ]
+
+
 cerradura = CerraduraInteligente()
 ciberseguridad = Ciberseguridad()
 lecturas_iot = LecturasIOT()
 notacion = NotacionCientifica()
 transaccion = TransaccionBancaria()
+e_commerce = ECommerce()
 
 
 @app.route('/')
@@ -339,6 +369,28 @@ def procesar_transaccion():
         'resultado': resultado['valida'],
         'estado_final': resultado['estado_final'],
         'recorrido': resultado['recorrido']
+    })
+
+
+@app.route('/e-commerce')
+def formulario_ecommerce():
+    return render_template('ecommerce.html',
+                         tabla=e_commerce.obtener_tabla_html(),
+                         diagrama_filename=e_commerce.obtener_diagrama_filename(),
+                         ejemplos=e_commerce.obtener_ejemplos())
+
+
+@app.route('/e-commerce/procesar', methods=['POST'])
+def procesar_ecommerce():
+    datos = request.get_json()
+    secuencia = datos.get('secuencia', [])
+    
+    resultado = e_commerce.ejecutar(secuencia)
+    return jsonify({
+        'resultado': resultado['aceptada'],
+        'estado_final': resultado['estado_final'],
+        'recorrido': resultado['recorrido'],
+        'mensaje': resultado.get('mensaje', '')
     })
 
 
