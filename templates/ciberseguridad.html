@@ -2,10 +2,10 @@
 
 {% block titulo %}Ciberseguridad{% endblock %}
 
-{% block encabezado %}🔒 Ciberseguridad - Handshake de Red{% endblock %}
+{% block encabezado %}Ciberseguridad - Handshake de Red{% endblock %}
 
 {% block descripcion %}
-    Autómata Finito No Determinista (AFN) que valida el flujo de sincronización de red (SYN → ACK → RST)
+    Autómata Finito No Determinista (AFN) que valida el flujo de sincronización de red (SYN - ACK - RST)
 {% endblock %}
 
 {% block contenido %}
@@ -24,28 +24,28 @@
     <div style="margin-top: 15px;">
         <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos rápidos:</p>
         <div class="ejemplos">
-            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK', 'RST'])">SYN → ACK → RST</button>
-            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK', 'ACK', 'RST'])">SYN → ACK → ACK → RST</button>
-            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK'])">SYN → ACK</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK', 'RST'])">SYN - ACK - RST</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK', 'ACK', 'RST'])">SYN - ACK - ACK - RST</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploCiberseguridad(['SYN', 'ACK'])">SYN - ACK</button>
         </div>
     </div>
 </div>
 
 <div class="contenedor-principal">
     <div class="panel">
-        <div class="panel-titulo">📊 Tabla de Transiciones (AFN)</div>
+        <div class="panel-titulo">Tabla de Transiciones (AFN)</div>
         {{ tabla|safe }}
     </div>
     
     {% if diagrama_filename %}
     <div class="panel">
-        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <div class="panel-titulo">Diagrama de Estados</div>
         <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
     </div>
     {% endif %}
     
     <div class="panel">
-        <div class="panel-titulo">ℹ️ Información</div>
+        <div class="panel-titulo">Información</div>
         <p><strong>Tipo:</strong> Autómata Finito No Determinista</p>
         <p><strong>Símbolos:</strong> SYN, ACK, DATA, RST</p>
         <p><strong>Estado inicial:</strong> q0</p>
@@ -82,12 +82,12 @@
         .then(response => response.json())
         .then(data => {
             const clase = data.resultado ? 'aceptado' : 'rechazado';
-            const texto = data.resultado ? '✓ ACEPTADA' : '✗ RECHAZADA';
+            const texto = data.resultado ? 'ACEPTADA' : 'RECHAZADA';
             
             let html = `<div class="resultado ${clase}">${texto}</div>`;
             html += `<div class="recorrido">
                         <div class="recorrido-titulo">Secuencia ingresada:</div>
-                        <div class="recorrido-contenido">${cadena.join(' → ')}</div>
+                        <div class="recorrido-contenido">${cadena.join(' - ')}</div>
                      </div>`;
             
             cargando.innerHTML = html;

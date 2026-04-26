@@ -1,17 +1,17 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
-from cerradura_inteligente import validar_cerradura as _validar_cerradura, TRANSICIONES as TRANS_CERRADURA, ESTADO_INICIAL as INICIAL_CERRADURA, ESTADOS_FINALES as FINALES_CERRADURA
+from cerradura_inteligente import validar_cerradura as _validar_cerradura, TRANSICIONES as TRANS_CERRADURA, ESTADO_INICIAL as INICIAL_CERRADURA, ESTADOS_FINALES as FINALES_CERRADURA, Estados as Estados_Cerradura
 from ciberseguridad import procesar_afn as _procesar_afn_ciberseguridad, tabla_transiciones as TRANS_CIBERSEGURIDAD, estados as Estados_Ciberseguridad
 from lecturas_iot import procesar_afn as _procesar_afn_iot, transiciones as TRANS_IOT, Estados as Estados_IOT
 from notacion_cientifica import es_valido as _es_valido
-from transaccion_bancaria import validar_transaccion as _validar_transaccion, TRANSICIONES as TRANS_TRANSACCION, ESTADO_INICIAL as INICIAL_TRANSACCION, ESTADOS_FINALES as FINALES_TRANSACCION
-from e_commerce import simular_afd as _simular_afd, TRANSICIONES as TRANS_ECOMMERCE, ESTADO_INICIAL as INICIAL_ECOMMERCE, ESTADOS_FINALES as FINALES_ECOMMERCE
+from transaccion_bancaria import validar_transaccion as _validar_transaccion, TRANSICIONES as TRANS_TRANSACCION, ESTADO_INICIAL as INICIAL_TRANSACCION, ESTADOS_FINALES as FINALES_TRANSACCION, Estados as Estados_Transaccion
+from e_commerce import simular_afd as _simular_afd, TRANSICIONES as TRANS_ECOMMERCE, ESTADO_INICIAL as INICIAL_ECOMMERCE, ESTADOS_FINALES as FINALES_ECOMMERCE, Estados as Estados_Ecommerce
 
 app = Flask(__name__)
 
 
 class GeneradorDiagrama:
     @staticmethod
-    def generar_tabla_html(transiciones, estados, estados_finales=None, es_afn=False):
+    def generar_tabla_html(transiciones, estados, estados_finales=None, es_afn=False, use_enum=False):
         if not estados:
             return "<p>No hay estados disponibles</p>"
         
@@ -28,14 +28,22 @@ class GeneradorDiagrama:
         
         for estado in estados:
             html += '<tr>'
-            color = '#90EE90' if estado in (estados_finales or []) else '#FFFFFF'
-            html += f'<td style="background-color: {color}; font-weight: bold;">{estado}</td>'
+            estado_display = estado.name if use_enum else estado
+            is_final = estado in (estados_finales or []) if use_enum else estado in (estados_finales or [])
+            color = '#90EE90' if is_final else '#FFFFFF'
+            html += f'<td style="background-color: {color}; font-weight: bold;">{estado_display}</td>'
             for simbolo in simbolos:
                 destinos = transiciones.get(estado, {}).get(simbolo, [])
                 if es_afn:
-                    dest_str = ", ".join(str(d) for d in destinos) if destinos else "-"
+                    if use_enum:
+                        dest_str = ", ".join(d.name for d in destinos) if destinos else "-"
+                    else:
+                        dest_str = ", ".join(str(d) for d in destinos) if destinos else "-"
                 else:
-                    dest_str = str(destinos) if destinos else "-"
+                    if use_enum:
+                        dest_str = destinos.name if destinos else "-"
+                    else:
+                        dest_str = str(destinos) if destinos else "-"
                 html += f'<td>{dest_str}</td>'
             html += '</tr>'
         
@@ -54,10 +62,17 @@ class CerraduraInteligente:
         return _validar_cerradura(cadena)
     
     def obtener_tabla_html(self):
+        trans_simplificada = {}
+        for estado in self.transiciones:
+            trans_simplificada[estado] = {}
+            for simbolo, destino in self.transiciones[estado].items():
+                trans_simplificada[estado][simbolo] = destino.name
+        
         return GeneradorDiagrama.generar_tabla_html(
             self.transiciones, 
             self.estados, 
-            self.estados_finales
+            self.estados_finales,
+            use_enum=True
         )
     
     def obtener_diagrama_filename(self):
@@ -205,10 +220,17 @@ class TransaccionBancaria:
         return _validar_transaccion(eventos)
     
     def obtener_tabla_html(self):
+        trans_simplificada = {}
+        for estado in self.transiciones:
+            trans_simplificada[estado] = {}
+            for simbolo, destino in self.transiciones[estado].items():
+                trans_simplificada[estado][simbolo] = destino.name
+        
         return GeneradorDiagrama.generar_tabla_html(
             self.transiciones,
             self.estados,
-            self.estados_finales
+            self.estados_finales,
+            use_enum=True
         )
     
     def obtener_diagrama_filename(self):
@@ -233,10 +255,17 @@ class ECommerce:
         return _simular_afd(tokens)
     
     def obtener_tabla_html(self):
+        trans_simplificada = {}
+        for estado in self.transiciones:
+            trans_simplificada[estado] = {}
+            for simbolo, destino in self.transiciones[estado].items():
+                trans_simplificada[estado][simbolo] = destino.name
+        
         return GeneradorDiagrama.generar_tabla_html(
             self.transiciones,
             self.estados,
-            self.estados_finales
+            self.estados_finales,
+            use_enum=True
         )
     
     def obtener_diagrama_filename(self):

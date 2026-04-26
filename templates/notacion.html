@@ -2,7 +2,7 @@
 
 {% block titulo %}Notación Científica{% endblock %}
 
-{% block encabezado %}🔬 Notación Científica{% endblock %}
+{% block encabezado %}Notación Científica{% endblock %}
 
 {% block descripcion %}
     Autómata Finito Determinista (AFD) que valida números en notación científica (ej: 1e10, -123e5, +0.99e-10)
@@ -23,7 +23,7 @@
     
     <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div>
-            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">✓ Ejemplos válidos:</p>
+            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos válidos:</p>
             <div class="ejemplos" style="flex-direction: column;">
                 {% for ejemplo in ejemplos_validos %}
                 <button class="btn btn-ejemplo" onclick="cargarEjemploNotacion('{{ ejemplo }}')" style="text-align: left;">{{ ejemplo }}</button>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div>
-            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">✗ Ejemplos inválidos:</p>
+            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos inválidos:</p>
             <div class="ejemplos" style="flex-direction: column;">
                 {% for ejemplo in ejemplos_invalidos %}
                 <button class="btn btn-ejemplo" onclick="cargarEjemploNotacion('{{ ejemplo }}')" style="text-align: left; background: #ffcccc; color: #333;">{{ ejemplo }}</button>
@@ -43,19 +43,19 @@
 
 <div class="contenedor-principal">
     <div class="panel">
-        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        <div class="panel-titulo">Tabla de Transiciones</div>
         {{ tabla|safe }}
     </div>
     
     {% if diagrama_filename %}
     <div class="panel">
-        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <div class="panel-titulo">Diagrama de Estados</div>
         <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
     </div>
     {% endif %}
     
     <div class="panel">
-        <div class="panel-titulo">ℹ️ Información</div>
+        <div class="panel-titulo">Información</div>
         <p><strong>Tipo:</strong> Autómata Finito Determinista</p>
         <p><strong>Patrón válido:</strong> [±]dígitos[.dígitos]e[±]dígitos</p>
         <p><strong>Estados:</strong> q0 a q7</p>
@@ -88,7 +88,7 @@
         .then(response => response.json())
         .then(data => {
             const clase = data.resultado ? 'aceptado' : 'rechazado';
-            const texto = data.resultado ? '✓ VÁLIDO EN NOTACIÓN CIENTÍFICA' : '✗ INVÁLIDO EN NOTACIÓN CIENTÍFICA';
+            const texto = data.resultado ? 'VÁLIDO EN NOTACIÓN CIENTÍFICA' : 'INVÁLIDO EN NOTACIÓN CIENTÍFICA';
             
             let html = `<div class="resultado ${clase}">${texto}</div>`;
             html += `<div class="recorrido">

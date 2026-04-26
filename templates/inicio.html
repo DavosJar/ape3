@@ -9,45 +9,45 @@
 {% endblock %}
 
 {% block contenido %}
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
     <a href="/cerradura" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">🔐 Cerradura Inteligente</h2>
+        <div style="background-color: #667eea; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">Cerradura Inteligente</h2>
             <p style="margin: 0; font-size: 0.95em;">AFD - Validar secuencias de cierre</p>
         </div>
     </a>
     
     <a href="/ciberseguridad" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">🔒 Ciberseguridad</h2>
+        <div style="background-color: #f093fb; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">Ciberseguridad</h2>
             <p style="margin: 0; font-size: 0.95em;">AFN - Validar handshake de red</p>
         </div>
     </a>
     
     <a href="/lecturas-iot" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">📡 Lecturas IoT</h2>
+        <div style="background-color: #4facfe; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">Lecturas IoT</h2>
             <p style="margin: 0; font-size: 0.95em;">AFN - Validar paquetes sensor</p>
         </div>
     </a>
     
     <a href="/notacion" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">🔬 Notación Científica</h2>
+        <div style="background-color: #43e97b; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">Notación Científica</h2>
             <p style="margin: 0; font-size: 0.95em;">AFD - Validar números científicos</p>
         </div>
     </a>
     
     <a href="/transaccion" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow: 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">💳 Transacción Bancaria</h2>
+        <div style="background-color: #fa709a; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">Transacción Bancaria</h2>
             <p style="margin: 0; font-size: 0.95em;">AFD - Validar flujo de pago</p>
         </div>
     </a>
     
     <a href="/e-commerce" style="text-decoration: none;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow: 0.3s;">
-            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">🛒 E-Commerce</h2>
+        <div style="background-color: #667eea; color: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: transform 0.3s;">
+            <h2 style="margin: 0; font-size: 1.5em; margin-bottom: 10px;">E-Commerce</h2>
             <p style="margin: 0; font-size: 0.95em;">AFD - Validar comprador potencial</p>
         </div>
     </a>
@@ -57,11 +57,9 @@
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('mouseenter', function() {
             this.querySelector('div').style.transform = 'translateY(-5px)';
-            this.querySelector('div').style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.3)';
         });
         link.addEventListener('mouseleave', function() {
             this.querySelector('div').style.transform = 'translateY(0)';
-            this.querySelector('div').style.boxShadow = 'none';
         });
     });
 </script>

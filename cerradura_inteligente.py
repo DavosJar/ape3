@@ -1,52 +1,61 @@
-ESTADO_INICIAL = "q0"
-ESTADOS_FINALES = {"q1"}
+from enum import Enum
+
+class Estados(Enum):
+    q0 = "INICIO"
+    q1 = "ACEPTACION"
+    q2 = "ESPERA"
+    q3 = "FALLO_PARCIAL"
+    q_error = "FALLO"
 
 TRANSICIONES = {
-    "q0": {"C": "q1", "F": "q2"},
-    "q1": {},
-    "q2": {"C": "q1", "F": "q3"},
-    "q3": {"C": "q1", "F": "q_error"},
-    "q_error": {"C": "q_error", "F": "q_error"}
+    Estados.q0: {"C": Estados.q1, "F": Estados.q2},
+    Estados.q1: {},
+    Estados.q2: {"C": Estados.q1, "F": Estados.q3},
+    Estados.q3: {"C": Estados.q1, "F": Estados.q_error},
+    Estados.q_error: {"C": Estados.q_error, "F": Estados.q_error}
 }
+
+ESTADO_INICIAL = Estados.q0
+ESTADOS_FINALES = {Estados.q1}
 
 def validar_cerradura(cadena):
     estado_actual = ESTADO_INICIAL
-    recorrido = [estado_actual]
+    recorrido = [estado_actual.name]
 
     for simbolo in cadena:
         if simbolo not in {"C", "F"}:
             return {
                 "valida": False,
-                "estado_final": estado_actual,
+                "estado_final": estado_actual.name,
                 "recorrido": recorrido
             }
 
         if simbolo in TRANSICIONES[estado_actual]:
             estado_actual = TRANSICIONES[estado_actual][simbolo]
-            recorrido.append(estado_actual)
+            recorrido.append(estado_actual.name)
         else:
             return {
                 "valida": False,
-                "estado_final": estado_actual,
+                "estado_final": estado_actual.name,
                 "recorrido": recorrido
             }
 
     if estado_actual in ESTADOS_FINALES:
         return {
             "valida": True,
-            "estado_final": estado_actual,
+            "estado_final": estado_actual.name,
             "recorrido": recorrido
         }
-    elif estado_actual == "q_error":
+    elif estado_actual == Estados.q_error:
         return {
             "valida": False,
-            "estado_final": estado_actual,
+            "estado_final": estado_actual.name,
             "recorrido": recorrido
         }
     else:
         return {
             "valida": False,
-            "estado_final": estado_actual,
+            "estado_final": estado_actual.name,
             "recorrido": recorrido
         }
 

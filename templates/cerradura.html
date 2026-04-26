@@ -2,7 +2,7 @@
 
 {% block titulo %}Cerradura Inteligente{% endblock %}
 
-{% block encabezado %}🔐 Cerradura Inteligente{% endblock %}
+{% block encabezado %}Cerradura Inteligente{% endblock %}
 
 {% block descripcion %}
     Autómata Finito Determinista (AFD) que valida secuencias de cierre y apertura (C = Cierre, F = Fallo)
@@ -33,13 +33,13 @@
 
 <div class="contenedor-principal">
     <div class="panel">
-        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        <div class="panel-titulo">Tabla de Transiciones</div>
         {{ tabla|safe }}
     </div>
     
     {% if diagrama_filename %}
     <div class="panel">
-        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <div class="panel-titulo">Diagrama de Estados</div>
         <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
     </div>
     {% endif %}
@@ -68,12 +68,12 @@
         .then(response => response.json())
         .then(data => {
             const clase = data.resultado ? 'aceptado' : 'rechazado';
-            const texto = data.resultado ? '✓ ACEPTADA' : '✗ RECHAZADA';
+            const texto = data.resultado ? 'ACEPTADA' : 'RECHAZADA';
             
             let html = `<div class="resultado ${clase}">${texto}</div>`;
             html += `<div class="recorrido">
                         <div class="recorrido-titulo">Recorrido del autómata:</div>
-                        <div class="recorrido-contenido">${data.recorrido.join(' → ')}</div>
+                        <div class="recorrido-contenido">${data.recorrido.join(' - ')}</div>
                      </div>`;
             
             cargando.innerHTML = html;

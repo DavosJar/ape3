@@ -2,7 +2,7 @@
 
 {% block titulo %}E-Commerce{% endblock %}
 
-{% block encabezado %}🛒 E-Commerce - Validador de Comprador Potencial{% endblock %}
+{% block encabezado %}E-Commerce - Validador de Comprador Potencial{% endblock %}
 
 {% block descripcion %}
     Autómata Finito Determinista (AFD) que valida el flujo de un usuario: HOME → SEARCH+ → CART
@@ -33,13 +33,13 @@
 
 <div class="contenedor-principal">
     <div class="panel">
-        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        <div class="panel-titulo">Tabla de Transiciones</div>
         {{ tabla|safe }}
     </div>
     
     {% if diagrama_filename %}
     <div class="panel">
-        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <div class="panel-titulo">Diagrama de Estados</div>
         <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
     </div>
     {% endif %}
@@ -73,7 +73,7 @@
         .then(response => response.json())
         .then(data => {
             const clase = data.resultado ? 'aceptado' : 'rechazado';
-            const texto = data.resultado ? '✓ COMPRADOR POTENCIAL' : '✗ NO ES COMPRADOR POTENCIAL';
+            const texto = data.resultado ? 'COMPRADOR POTENCIAL' : 'NO ES COMPRADOR POTENCIAL';
             
             let html = `<div class="resultado ${clase}">${texto}</div>`;
             if (data.mensaje) {
@@ -84,7 +84,7 @@
             }
             html += `<div class="recorrido">
                         <div class="recorrido-titulo">Recorrido del autómata:</div>
-                        <div class="recorrido-contenido">${data.recorrido.join(' → ')}</div>
+                        <div class="recorrido-contenido">${data.recorrido.join(' - ')}</div>
                      </div>`;
             
             cargando.innerHTML = html;

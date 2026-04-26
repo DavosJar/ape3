@@ -2,7 +2,7 @@
 
 {% block titulo %}Lecturas IoT{% endblock %}
 
-{% block encabezado %}📡 Lecturas IoT - Validador de Paquetes{% endblock %}
+{% block encabezado %}Lecturas IoT - Validador de Paquetes{% endblock %}
 
 {% block descripcion %}
     Autómata Finito No Determinista (AFN) que valida paquetes de sensores IoT siguiendo: HDR (TEMP|HUM)* CRC
@@ -33,19 +33,19 @@
 
 <div class="contenedor-principal">
     <div class="panel">
-        <div class="panel-titulo">📊 Tabla de Transiciones (AFN)</div>
+        <div class="panel-titulo">Tabla de Transiciones (AFN)</div>
         {{ tabla|safe }}
     </div>
     
     {% if diagrama_filename %}
     <div class="panel">
-        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <div class="panel-titulo">Diagrama de Estados</div>
         <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
     </div>
     {% endif %}
     
     <div class="panel">
-        <div class="panel-titulo">ℹ️ Información</div>
+        <div class="panel-titulo">Información</div>
         <p><strong>Tipo:</strong> Autómata Finito No Determinista</p>
         <p><strong>Expresión regular:</strong> HDR (TEMP | HUM)* CRC</p>
         <p><strong>Símbolos:</strong> HDR, TEMP, HUM, CRC</p>
@@ -83,12 +83,12 @@
         .then(response => response.json())
         .then(data => {
             const clase = data.resultado ? 'aceptado' : 'rechazado';
-            const texto = data.resultado ? '✓ ACEPTADA' : '✗ RECHAZADA';
+            const texto = data.resultado ? 'ACEPTADA' : 'RECHAZADA';
             
             let html = `<div class="resultado ${clase}">${texto}</div>`;
             html += `<div class="recorrido">
                         <div class="recorrido-titulo">Secuencia de sensores:</div>
-                        <div class="recorrido-contenido">${cadena.join(' → ')}</div>
+                        <div class="recorrido-contenido">${cadena.join(' - ')}</div>
                      </div>`;
             
             cargando.innerHTML = html;

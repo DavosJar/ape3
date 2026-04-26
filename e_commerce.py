@@ -1,27 +1,36 @@
 from flask import Flask, request, jsonify
+from enum import Enum
 
 app = Flask(__name__)
 
-ESTADO_INICIAL = "q0"
-ESTADOS_FINALES = {"q3"}
+class Estados(Enum):
+    q0 = "INICIO"
+    q1 = "HOME_VISITADO"
+    q2 = "BUSQUEDA_REALIZADA"
+    q3 = "CARRITO_LLENO"
+    q_error = "ERROR"
+
 ALFABETO = {"HOME", "SEARCH", "CART"}
 
 TRANSICIONES = {
-    "q0": {"HOME": "q1", "SEARCH": "q_error", "CART": "q_error"},
-    "q1": {"HOME": "q_error", "SEARCH": "q2", "CART": "q_error"},
-    "q2": {"HOME": "q_error", "SEARCH": "q2", "CART": "q3"},
-    "q3": {"HOME": "q_error", "SEARCH": "q_error", "CART": "q_error"},
-    "q_error": {"HOME": "q_error", "SEARCH": "q_error", "CART": "q_error"},
+    Estados.q0: {"HOME": Estados.q1, "SEARCH": Estados.q_error, "CART": Estados.q_error},
+    Estados.q1: {"HOME": Estados.q_error, "SEARCH": Estados.q2, "CART": Estados.q_error},
+    Estados.q2: {"HOME": Estados.q_error, "SEARCH": Estados.q2, "CART": Estados.q3},
+    Estados.q3: {"HOME": Estados.q_error, "SEARCH": Estados.q_error, "CART": Estados.q_error},
+    Estados.q_error: {"HOME": Estados.q_error, "SEARCH": Estados.q_error, "CART": Estados.q_error},
 }
+
+ESTADO_INICIAL = Estados.q0
+ESTADOS_FINALES = {Estados.q3}
 
 def simular_afd(tokens):
     estado_actual = ESTADO_INICIAL
-    recorrido = [estado_actual]
+    recorrido = [estado_actual.name]
 
     if len(tokens) == 0:
         return {
             "aceptada": False,
-            "estado_final": "q0",
+            "estado_final": Estados.q0.name,
             "mensaje": "Secuencia vacía",
             "recorrido": recorrido
         }
@@ -38,19 +47,19 @@ def simular_afd(tokens):
             }
 
         estado_actual = TRANSICIONES[estado_actual][token]
-        recorrido.append(estado_actual)
+        recorrido.append(estado_actual.name)
 
     if estado_actual in ESTADOS_FINALES:
         return {
             "aceptada": True,
-            "estado_final": estado_actual,
+            "estado_final": estado_actual.name,
             "mensaje": "Usuario identificado como comprador potencial",
             "recorrido": recorrido
         }
 
     return {
         "aceptada": False,
-        "estado_final": estado_actual,
+        "estado_final": estado_actual.name,
         "mensaje": "El usuario no cumple el patrón HOME SEARCH+ CART",
         "recorrido": recorrido
     }
