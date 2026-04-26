@@ -47,7 +47,7 @@ def procesar_afn(tabla, estado_inicial, estados_aceptacion, cadena):
         siguientes = set()
         for estado in estados_actuales:
             destinos = tabla[estado].get(simbolo, [])
-            siguientes.update(destinos)  # funciona porque todo es lista
+            siguientes.update(destinos) 
         estados_actuales = siguientes
 
     return bool(estados_actuales & estados_aceptacion)
