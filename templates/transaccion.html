@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block titulo %}Transacción Bancaria{% endblock %}
+
+{% block encabezado %}💳 Transacción Bancaria{% endblock %}
+
+{% block descripcion %}
+    Autómata Finito Determinista (AFD) que valida el flujo de una transacción bancaria: Autorizar → Capturar → Liquidar → Completar
+{% endblock %}
+
+{% block contenido %}
+<div class="seccion-formulario">
+    <h2 style="color: #667eea; margin-bottom: 15px;">Ingrese una secuencia de eventos</h2>
+    <div class="formulario-grupo">
+        <label>Eventos (Autorizar, Capturar, Liquidar, Completar, Cancelar):</label>
+        <textarea id="entrada-transaccion" placeholder="Ej: Autorizar,Capturar,Liquidar,Completar o en líneas separadas"></textarea>
+    </div>
+    
+    <div class="botones-accion">
+        <button class="btn btn-primario" onclick="procesarTransaccion()">Procesar</button>
+        <button class="btn btn-secundario" onclick="limpiarTransaccion()">Limpiar</button>
+    </div>
+    
+    <div style="margin-top: 15px;">
+        <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos rápidos:</p>
+        <div class="ejemplos">
+            <button class="btn btn-ejemplo" onclick="cargarEjemploTransaccion(['Autorizar', 'Capturar', 'Liquidar', 'Completar'])">Flujo completo</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploTransaccion(['Autorizar', 'Capturar', 'Liquidar'])">Sin completar</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploTransaccion(['Autorizar', 'Cancelar'])">Cancelada</button>
+        </div>
+    </div>
+</div>
+
+<div class="contenedor-principal">
+    <div class="panel">
+        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        {{ tabla|safe }}
+    </div>
+    
+    {% if diagrama_filename %}
+    <div class="panel">
+        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
+    </div>
+    {% endif %}
+</div>
+
+<div id="resultado-transaccion"></div>
+
+<script>
+    function procesarTransaccion() {
+        const entrada = document.getElementById('entrada-transaccion').value.trim();
+        if (!entrada) {
+            alert('Por favor ingrese una secuencia de eventos');
+            return;
+        }
+        
+        let eventos = entrada.split('\n').map(s => s.trim()).filter(s => s);
+        if (eventos.length === 1 && eventos[0].includes(',')) {
+            eventos = eventos[0].split(',').map(s => s.trim());
+        }
+        
+        const cargando = document.getElementById('resultado-transaccion');
+        cargando.innerHTML = '<div class="cargando"><div class="spinner"></div></div>';
+        
+        fetch('/transaccion/procesar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({eventos: eventos})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const clase = data.resultado ? 'aceptado' : 'rechazado';
+            const texto = data.resultado ? '✓ TRANSACCIÓN VÁLIDA' : '✗ TRANSACCIÓN INVÁLIDA';
+            
+            let html = `<div class="resultado ${clase}">${texto}</div>`;
+            html += `<div class="recorrido">
+                        <div class="recorrido-titulo">Recorrido de la transacción:</div>
+                        <div class="recorrido-contenido">${data.recorrido.join(' → ')}</div>
+                     </div>`;
+            
+            cargando.innerHTML = html;
+        });
+    }
+    
+    function limpiarTransaccion() {
+        document.getElementById('entrada-transaccion').value = '';
+        document.getElementById('resultado-transaccion').innerHTML = '';
+    }
+    
+    function cargarEjemploTransaccion(ejemplo) {
+        document.getElementById('entrada-transaccion').value = ejemplo.join('\n');
+        procesarTransaccion();
+    }
+</script>
+{% endblock %}

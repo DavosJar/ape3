@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block titulo %}Lecturas IoT{% endblock %}
+
+{% block encabezado %}📡 Lecturas IoT - Validador de Paquetes{% endblock %}
+
+{% block descripcion %}
+    Autómata Finito No Determinista (AFN) que valida paquetes de sensores IoT siguiendo: HDR (TEMP|HUM)* CRC
+{% endblock %}
+
+{% block contenido %}
+<div class="seccion-formulario">
+    <h2 style="color: #667eea; margin-bottom: 15px;">Ingrese una secuencia de sensores</h2>
+    <div class="formulario-grupo">
+        <label>Símbolos (HDR, TEMP, HUM, CRC):</label>
+        <textarea id="entrada-iot" placeholder="Ej: HDR,TEMP,HUM,CRC o en líneas separadas"></textarea>
+    </div>
+    
+    <div class="botones-accion">
+        <button class="btn btn-primario" onclick="procesarIOT()">Procesar</button>
+        <button class="btn btn-secundario" onclick="limpiarIOT()">Limpiar</button>
+    </div>
+    
+    <div style="margin-top: 15px;">
+        <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos rápidos:</p>
+        <div class="ejemplos">
+            <button class="btn btn-ejemplo" onclick="cargarEjemploIOT(['HDR', 'TEMP', 'HUM', 'CRC'])">HDR → TEMP → HUM → CRC</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploIOT(['HDR', 'TEMP', 'TEMP', 'HUM', 'CRC'])">HDR → TEMP → TEMP → HUM → CRC</button>
+            <button class="btn btn-ejemplo" onclick="cargarEjemploIOT(['HDR', 'CRC'])">HDR → CRC</button>
+        </div>
+    </div>
+</div>
+
+<div class="contenedor-principal">
+    <div class="panel">
+        <div class="panel-titulo">📊 Tabla de Transiciones (AFN)</div>
+        {{ tabla|safe }}
+    </div>
+    
+    {% if diagrama_filename %}
+    <div class="panel">
+        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
+    </div>
+    {% endif %}
+    
+    <div class="panel">
+        <div class="panel-titulo">ℹ️ Información</div>
+        <p><strong>Tipo:</strong> Autómata Finito No Determinista</p>
+        <p><strong>Expresión regular:</strong> HDR (TEMP | HUM)* CRC</p>
+        <p><strong>Símbolos:</strong> HDR, TEMP, HUM, CRC</p>
+        <p><strong>Estado inicial:</strong> q0</p>
+        <p><strong>Estado aceptación:</strong> q3</p>
+        <p><strong>Característica:</strong> Permite múltiples TEMP/HUM entre HDR y CRC</p>
+    </div>
+</div>
+
+<div id="resultado-iot"></div>
+
+<script>
+    function procesarIOT() {
+        const entrada = document.getElementById('entrada-iot').value.trim();
+        if (!entrada) {
+            alert('Por favor ingrese una secuencia');
+            return;
+        }
+        
+        let cadena = entrada.split('\n').map(s => s.trim()).filter(s => s);
+        if (cadena.length === 1 && cadena[0].includes(',')) {
+            cadena = cadena[0].split(',').map(s => s.trim());
+        }
+        
+        const cargando = document.getElementById('resultado-iot');
+        cargando.innerHTML = '<div class="cargando"><div class="spinner"></div></div>';
+        
+        fetch('/lecturas-iot/procesar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({cadena: cadena})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const clase = data.resultado ? 'aceptado' : 'rechazado';
+            const texto = data.resultado ? '✓ ACEPTADA' : '✗ RECHAZADA';
+            
+            let html = `<div class="resultado ${clase}">${texto}</div>`;
+            html += `<div class="recorrido">
+                        <div class="recorrido-titulo">Secuencia de sensores:</div>
+                        <div class="recorrido-contenido">${cadena.join(' → ')}</div>
+                     </div>`;
+            
+            cargando.innerHTML = html;
+        });
+    }
+    
+    function limpiarIOT() {
+        document.getElementById('entrada-iot').value = '';
+        document.getElementById('resultado-iot').innerHTML = '';
+    }
+    
+    function cargarEjemploIOT(ejemplo) {
+        document.getElementById('entrada-iot').value = ejemplo.join('\n');
+        procesarIOT();
+    }
+</script>
+{% endblock %}

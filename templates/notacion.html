@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block titulo %}Notación Científica{% endblock %}
+
+{% block encabezado %}🔬 Notación Científica{% endblock %}
+
+{% block descripcion %}
+    Autómata Finito Determinista (AFD) que valida números en notación científica (ej: 1e10, -123e5, +0.99e-10)
+{% endblock %}
+
+{% block contenido %}
+<div class="seccion-formulario">
+    <h2 style="color: #667eea; margin-bottom: 15px;">Ingrese un número en notación científica</h2>
+    <div class="formulario-grupo">
+        <label>Número:</label>
+        <input type="text" id="entrada-notacion" placeholder="Ej: 1e10, -123e5, 3.14e-2" maxlength="50">
+    </div>
+    
+    <div class="botones-accion">
+        <button class="btn btn-primario" onclick="procesarNotacion()">Procesar</button>
+        <button class="btn btn-secundario" onclick="limpiarNotacion()">Limpiar</button>
+    </div>
+    
+    <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">✓ Ejemplos válidos:</p>
+            <div class="ejemplos" style="flex-direction: column;">
+                {% for ejemplo in ejemplos_validos %}
+                <button class="btn btn-ejemplo" onclick="cargarEjemploNotacion('{{ ejemplo }}')" style="text-align: left;">{{ ejemplo }}</button>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">✗ Ejemplos inválidos:</p>
+            <div class="ejemplos" style="flex-direction: column;">
+                {% for ejemplo in ejemplos_invalidos %}
+                <button class="btn btn-ejemplo" onclick="cargarEjemploNotacion('{{ ejemplo }}')" style="text-align: left; background: #ffcccc; color: #333;">{{ ejemplo }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contenedor-principal">
+    <div class="panel">
+        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        {{ tabla|safe }}
+    </div>
+    
+    {% if diagrama_filename %}
+    <div class="panel">
+        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
+    </div>
+    {% endif %}
+    
+    <div class="panel">
+        <div class="panel-titulo">ℹ️ Información</div>
+        <p><strong>Tipo:</strong> Autómata Finito Determinista</p>
+        <p><strong>Patrón válido:</strong> [±]dígitos[.dígitos]e[±]dígitos</p>
+        <p><strong>Estados:</strong> q0 a q7</p>
+        <p><strong>Estado inicial:</strong> q0</p>
+        <p><strong>Estado aceptación:</strong> q7</p>
+        <p><strong>Nota:</strong> Obligatorio terminar con número después de 'e' o 'E'</p>
+    </div>
+</div>
+
+<div id="resultado-notacion"></div>
+
+<script>
+    function procesarNotacion() {
+        const entrada = document.getElementById('entrada-notacion').value.trim();
+        if (!entrada) {
+            alert('Por favor ingrese un número');
+            return;
+        }
+        
+        const cargando = document.getElementById('resultado-notacion');
+        cargando.innerHTML = '<div class="cargando"><div class="spinner"></div></div>';
+        
+        fetch('/notacion/procesar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({cadena: entrada})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const clase = data.resultado ? 'aceptado' : 'rechazado';
+            const texto = data.resultado ? '✓ VÁLIDO EN NOTACIÓN CIENTÍFICA' : '✗ INVÁLIDO EN NOTACIÓN CIENTÍFICA';
+            
+            let html = `<div class="resultado ${clase}">${texto}</div>`;
+            html += `<div class="recorrido">
+                        <div class="recorrido-titulo">Número ingresado:</div>
+                        <div class="recorrido-contenido">${entrada}</div>
+                     </div>`;
+            
+            cargando.innerHTML = html;
+        });
+    }
+    
+    function limpiarNotacion() {
+        document.getElementById('entrada-notacion').value = '';
+        document.getElementById('resultado-notacion').innerHTML = '';
+    }
+    
+    function cargarEjemploNotacion(ejemplo) {
+        document.getElementById('entrada-notacion').value = ejemplo;
+        procesarNotacion();
+    }
+</script>
+{% endblock %}

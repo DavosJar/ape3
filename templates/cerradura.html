@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cerradura Inteligente{% endblock %}
+
+{% block encabezado %}🔐 Cerradura Inteligente{% endblock %}
+
+{% block descripcion %}
+    Autómata Finito Determinista (AFD) que valida secuencias de cierre y apertura (C = Cierre, F = Fallo)
+{% endblock %}
+
+{% block contenido %}
+<div class="seccion-formulario">
+    <h2 style="color: #667eea; margin-bottom: 15px;">Ingrese una secuencia</h2>
+    <div class="formulario-grupo">
+        <label>Cadena (solo C y F):</label>
+        <input type="text" id="entrada-cerradura" placeholder="Ej: C, FC, CCC, FFC..." maxlength="50">
+    </div>
+    
+    <div class="botones-accion">
+        <button class="btn btn-primario" onclick="procesarCerradura()">Procesar</button>
+        <button class="btn btn-secundario" onclick="limpiarCerradura()">Limpiar</button>
+    </div>
+    
+    <div style="margin-top: 15px;">
+        <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">Ejemplos rápidos:</p>
+        <div class="ejemplos">
+            {% for ejemplo in ejemplos %}
+            <button class="btn btn-ejemplo" onclick="cargarEjemploCerradura('{{ ejemplo }}')">{{ ejemplo }}</button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="contenedor-principal">
+    <div class="panel">
+        <div class="panel-titulo">📊 Tabla de Transiciones</div>
+        {{ tabla|safe }}
+    </div>
+    
+    {% if diagrama_filename %}
+    <div class="panel">
+        <div class="panel-titulo">🎯 Diagrama de Estados</div>
+        <img src="/diagramas/{{ diagrama_filename }}" alt="Diagrama de estados" class="diagrama-imagen">
+    </div>
+    {% endif %}
+</div>
+
+<div id="resultado-cerradura"></div>
+
+<script>
+    function procesarCerradura() {
+        const entrada = document.getElementById('entrada-cerradura').value;
+        if (!entrada) {
+            alert('Por favor ingrese una cadena');
+            return;
+        }
+        
+        const cargando = document.getElementById('resultado-cerradura');
+        cargando.innerHTML = '<div class="cargando"><div class="spinner"></div></div>';
+        
+        fetch('/cerradura/procesar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({cadena: entrada})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const clase = data.resultado ? 'aceptado' : 'rechazado';
+            const texto = data.resultado ? '✓ ACEPTADA' : '✗ RECHAZADA';
+            
+            let html = `<div class="resultado ${clase}">${texto}</div>`;
+            html += `<div class="recorrido">
+                        <div class="recorrido-titulo">Recorrido del autómata:</div>
+                        <div class="recorrido-contenido">${data.recorrido.join(' → ')}</div>
+                     </div>`;
+            
+            cargando.innerHTML = html;
+        });
+    }
+    
+    function limpiarCerradura() {
+        document.getElementById('entrada-cerradura').value = '';
+        document.getElementById('resultado-cerradura').innerHTML = '';
+    }
+    
+    function cargarEjemploCerradura(ejemplo) {
+        document.getElementById('entrada-cerradura').value = ejemplo;
+        procesarCerradura();
+    }
+</script>
+{% endblock %}

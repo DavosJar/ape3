@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Autómatas Finitos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <script src="{{ url_for('static', filename='js/animador.js') }}"></script>
+</head>
+<body>
+    <div class="contenedor">
+        <h1 class="titulo">{% block encabezado %}{% endblock %}</h1>
+        <p class="descripcion">{% block descripcion %}{% endblock %}</p>
+        
+        {% block contenido %}{% endblock %}
+    </div>
+</body>
+</html>
