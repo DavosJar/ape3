@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="q0">
+			<x>239.0</x>
+			<y>238.0</y>
+			<label>Inicio</label>
+			<initial/>
+		</state>
+		<state id="1" name="q1">
+			<x>466.0</x>
+			<y>233.0</y>
+			<final/>
+		</state>
+		<state id="2" name="q2">
+			<x>466.0</x>
+			<y>358.0</y>
+			<label>1er Intento Fallido</label>
+		</state>
+		<state id="3" name="q3">
+			<x>674.0</x>
+			<y>357.0</y>
+			<label>2do Intento Fallido</label>
+		</state>
+		<state id="4" name="q_error">
+			<x>838.0</x>
+			<y>358.0</y>
+			<label>3er Intento fallido/Bloqueado</label>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>F</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>C</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>F</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>C</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>4</to>
+			<read>C</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>1</to>
+			<read>C</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>4</to>
+			<read>F</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>F</read>
+		</transition>
+	</automaton>
+</structure>
